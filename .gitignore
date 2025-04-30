@@ -1,0 +1,7 @@
+# Ignore logs directory contents, but keep the directory itself
+/logs/*
+
+# Ignore logrotate state file
+*.state
+
+# Ignore temporary or sensitive files if any are created later
