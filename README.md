@@ -12,19 +12,6 @@ This repository contains a suite of Bash scripts designed to automate routine sy
 * Generates a daily text report file with the results of the checks.
 * Includes a dry-run mode for safe testing.
 
-**Note:** This version of the script focuses on generating a local report file. Emailing reports or triggering external alerts is not included in this version.
-
-## Roadmap
-
-This project follows a roadmap to build out the automation suite:
-
-1.  Environment Setup & Repository Scaffolding (Completed)
-2.  Implement Core Modules (Maintenance tasks, Monitoring checks, Report Generation) (Completed - Core logic)
-3.  Integrate Workflow & Implement Dry-Run Mode (Partial - Dry-run logic in place)
-4.  Automate Scheduling (Pending)
-5.  Testing & Hardening (Ongoing)
-6.  Documentation & Versioning (Ongoing)
-
 ## Directory Structure
 
 * `bin/`: Contains executable scripts (e.g., `maintenance.sh`).
