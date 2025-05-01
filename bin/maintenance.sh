@@ -38,7 +38,7 @@ for arg in "$@"; do
     # exit 1 
     shift # Remove argument
     ;;
-  esl
+  esac
 done
 
 # --- Logging Setup ---
@@ -139,22 +139,24 @@ rotate_logs() {
 }
 
 # 3.3 Resource Monitoring - CPU & RAM
+# 3.3 Resource Monitoring - CPU & RAM
 check_cpu_ram() {
   echo "--- CPU & RAM Usage ---"
-  # Get CPU idle percentage from top, then calculate usage (supports varying top outputs)
-  # Using awk to handle potential multiple spaces and get the correct field
-  cpu_idle=$(top -bn1 | grep "Cpu(s)" | awk '{print $NF}' | sed 's/%//') # NF is usually idle % field
-  if [[ "$cpu_idle" == "id," ]]; then cpu_idle=$(top -bn1 | grep "Cpu(s)" | awk '{print $(NF-1)}' | sed 's/,//'); fi # Fallback for different top outputs
+  # Get CPU idle percentage from top based on your system's output format
+  # Piping to 'grep "Cpu(s)"', then 'awk' to get the 8th field, then 'sed' to remove trailing comma
+  cpu_idle=$(top -bn1 | grep "Cpu(s)" | awk '{print $8}' | sed 's/,//') 
 
+  # Validate the extracted value
   if [ -z "$cpu_idle" ] || ! [[ "$cpu_idle" =~ ^[0-9.]+$ ]]; then
-     echo "CPU Usage: N/A (Error parsing top output)"
+     echo "CPU Usage: N/A (Error parsing top output format)"
+     # Optionally return 1 or log an error if this check is critical
   else
+     # Calculate CPU usage (100 - idle)
      cpu_usage=$(awk "BEGIN { printf \"%.2f\", 100 - $cpu_idle }")
      echo "CPU Usage: ${cpu_usage}%"
   fi
 
-  # Get Memory used percentage from free
-  # Using awk to calculate percentage (used/total * 100)
+  # Get Memory used percentage from free (This part seemed to work correctly)
   mem_line=$(free -m | awk '/Mem:/')
    if [ -z "$mem_line" ]; then
      echo "Memory Usage: N/A (Error parsing free output)"
@@ -254,6 +256,7 @@ check_docker() {
 }
 
 # 3.4 Container Health Checks - Kubernetes
+# 3.4 Container Health Checks - Kubernetes
 check_k8s() {
   echo "--- Kubernetes Pods (Non-Running) ---"
   if ! command -v kubectl &>/dev/null; then
@@ -261,28 +264,25 @@ check_k8s() {
     echo "-------------------------"
     return 0 # Not an error if kubectl is not installed
   fi
-  
+
   # Test if kubectl can connect to a cluster (basic check)
   # Use --request-timeout for systems where kubectl might hang
-  if ! kubectl version --client=true >/dev/null 2>&1 && ! kubectl cluster-info >/dev/null 2>&1 --request-timeout=5s ; then
+  # ADD || true HERE to prevent script exit on connection failure
+  if ! kubectl version --client=true >/dev/null 2>&1 && ! kubectl cluster-info >/dev/null 2>&1 --request-timeout=5s || true ; then
      echo "kubectl cannot connect to a cluster or config is invalid. Skipping K8s checks."
      echo "-------------------------"
      return 0 # Not an error if cluster is not available
   fi
-  
+
   echo "Checking for pods not in 'Running' phase across all namespaces:"
   # Get pods with status phase not equal to Running, show labels for context
   # Use '|| true' to prevent set -e from exiting if no pods are found or kubectl has minor output to stderr
   kubectl get pods --all-namespaces --field-selector=status.phase!=Running --show-labels || true
-  
+
   # Check if the previous command actually found any non-running pods
-  # We can re-run a simpler version and count lines, or rely on the output above.
-  # Let's rely on the output above for now.
-  
-  # A more robust check would capture output and check if it contains more than just the header.
-  # For simplicity now, if kubectl ran without a critical error, assume it printed status.
-  # You could add: if [ $(kubectl get pods --all-namespaces --field-selector=status.phase!=Running -o name | wc -l) -eq 0 ]; then echo "All pods are in 'Running' phase or no pods found."; fi
-  
+  # (Optional refinement - the || true above is enough to prevent exit)
+  # if [ $(kubectl get pods --all-namespaces --field-selector=status.phase!=Running -o name 2>/dev/null | wc -l) -eq 0 ]; then echo "All pods are in 'Running' phase or no pods found."; fi
+
   echo "-------------------------"
 }
 
