@@ -1,27 +1,29 @@
-# Automated System Maintenance Scripts
+# Automated System Maintenance & Reporting Scripts
 
-This repository contains Bash scripts to automate routine system maintenance tasks like package updates, log rotation, resource monitoring, container health checks, and daily reporting.
+This repository contains Bash scripts to automate routine system maintenance tasks and generate a daily report file summarizing system status (package updates, log rotation, resource monitoring, container health checks).
+
+Email alerting functionality has been excluded from this version. The primary output is a daily text report file.
 
 ## Roadmap
 
-Follow the steps outlined in the project roadmap to set this up.
+(Outline the steps you are following - similar to the revised roadmap above)
 
 ## Directory Structure
 
 * `bin/`: Executable scripts
-* `config/`: Configuration files (e.g., thresholds, recipients)
-* `logs/`: Generated log files and reports
+* `config/`: Configuration files (e.g., thresholds)
+* `logs/`: Generated log files and daily reports
 * `logrotate.conf`: User-level logrotate configuration
 * `README.md`: This file
 * `.gitignore`: Specifies intentionally untracked files
 
 ## Setup
 
-(Will add detailed setup steps here later)
+(Will add detailed setup steps here later, including prerequisites and cloning/setup)
 
 ## Usage
 
-(Will add usage instructions here later)
+(Will add usage instructions here later, including --dry-run)
 
 ## Configuration
 
@@ -30,6 +32,10 @@ Follow the steps outlined in the project roadmap to set this up.
 ## Scheduling
 
 (Will add cron scheduling instructions here later)
+
+## Log Files
+
+(Will describe the different log files generated here)
 
 ## Troubleshooting
 
