@@ -89,7 +89,7 @@ The script reads settings from `config/settings.conf`. Currently, the main setti
 
 Add other configuration variables here as your script grows.
 
-## Scheduling (For Day 2)
+## Scheduling 
 
 To automate the script, you will typically use cron. Add an entry to your user's crontab (`crontab -e`) to run the script at your desired interval (e.g., daily at midnight).
 
